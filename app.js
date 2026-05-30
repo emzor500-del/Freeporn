@@ -3,26 +3,52 @@ const BIN_ID = "6a1afbfbddf5aa59f7789c7d";
 const API_KEY = "$2a$10$FBPDkOcsz5GcC1wlDAIl6./Xlrjg8ye0T.3/ngjJ/TR04RRMwa5qG"; 
 const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-let APP_DATA = { settings: { siteName: "FreePorn", whatsappContact: "+2348131466173", adSnippet: "" }, videos: [] };
+// Pre-populated Sample Database Content
+// I can't scrape Pornhub, but I've added 10 varied stable examples with generic non-explicit thumbnails
+// so sorting works, views track globally, and content populates your screen immediately.
+const DEFAULT_DATABASE = {
+  settings: { siteName: "FreePorn", whatsappContact: "+2348131466173", adSnippet: "" },
+  videos: [
+    { id: "vid-01", title: "Trending Mobile Stream Demo", url: "https://www.w3schools.com/html/mov_bbb.mp4", thumbnail: "https://images.pexels.com/photos/10186171/pexels-photo-10186171.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", category: "Trending", views: 2450 },
+    { id: "vid-02", title: "Amateur Home Clip Preview", url: "https://www.w3schools.com/html/movie.mp4", thumbnail: "https://images.pexels.com/photos/10186169/pexels-photo-10186169.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", category: "Amateur", views: 1890 },
+    { id: "vid-03", title: "Premium Cinematic Feature Teaser", url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", thumbnail: "https://images.pexels.com/photos/10186170/pexels-photo-10186170.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", category: "Premium", views: 3120 },
+    { id: "vid-04", title: "POV Perspective Experience Clip", url: "https://www.w3schools.com/html/mov_bbb.mp4", thumbnail: "https://images.pexels.com/photos/10186172/pexels-photo-10186172.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", category: "Trending", views: 1100 },
+    { id: "vid-05", title: "Solo Amateur Star Preview", url: "https://www.w3schools.com/html/movie.mp4", thumbnail: "https://images.pexels.com/photos/10186168/pexels-photo-10186168.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", category: "Amateur", views: 950 },
+    { id: "vid-06", title: "Premium VR Video Showcase", url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", thumbnail: "https://images.pexels.com/photos/10186167/pexels-photo-10186167.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", category: "Premium", views: 4200 },
+    { id: "vid-07", title: "Hot New Amateur Couple Video", url: "https://www.w3schools.com/html/mov_bbb.mp4", thumbnail: "https://images.pexels.com/photos/10186166/pexels-photo-10186166.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", category: "Amateur", views: 1540 },
+    { id: "vid-08", title: "Exclusive Premium Model Interview", url: "https://www.w3schools.com/html/movie.mp4", thumbnail: "https://images.pexels.com/photos/10186165/pexels-photo-10186165.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", category: "Premium", views: 2210 },
+    { id: "vid-09", title: "Trending Compilation Special", url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", thumbnail: "https://images.pexels.com/photos/10186164/pexels-photo-10186164.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", category: "Trending", views: 5300 },
+    { id: "vid-10", title: "Behind The Scenes Amateur Shoot", url: "https://www.w3schools.com/html/mov_bbb.mp4", thumbnail: "https://images.pexels.com/photos/10186163/pexels-photo-10186163.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", category: "Amateur", views: 880 }
+  ]
+};
 
+let APP_DATA = DEFAULT_DATABASE; // State holder initialized with default data
+
+// Age Gate Protection Interceptor
 if (!localStorage.getItem('isAdult') && !window.location.href.includes('age-verify.html')) {
   window.location.href = 'age-verify.html';
 }
 
+// Global Fetch Loader Handler initialization setup
+// Tries to load cloud data; falls back to defaults if authentication fails (as seen in image_7.png)
 async function fetchCloudData() {
   try {
     const res = await fetch(`${BIN_URL}/latest`, {
       headers: { "X-Master-Key": API_KEY }
     });
-    if (!res.ok) throw new Error("Authentication failed or Bin not found");
-    const json = await res.json();
-    APP_DATA = json.record;
-
-    const adSlot = document.getElementById('globalAdSlot');
-    if (adSlot && APP_DATA.settings && APP_DATA.settings.adSnippet) {
-      adSlot.innerHTML = APP_DATA.settings.adSnippet;
+    
+    if (res.ok) {
+      const json = await res.json();
+      APP_DATA = json.record;
+    } else {
+      console.warn("Using default fallback content (Authentication failed or Bin not found).");
+      // Fallback UI warning for the admin if API keys are misconfigured
+      if (window.location.href.includes('admin.html')) {
+        alert("Database connection failed. Please verify your JSONBin API Master Key setup. Fallback content loaded.");
+      }
     }
 
+    // Route actions based on active pages
     if (document.getElementById('mainVideoGrid')) {
       renderVideoGrid(APP_DATA.videos || []);
     } else if (window.location.href.includes('watch.html')) {
@@ -31,13 +57,12 @@ async function fetchCloudData() {
       initAdminDashboard();
     }
   } catch (err) {
-    console.error("Database connection failed:", err);
-    if (window.location.href.includes('admin.html')) {
-      alert("Database Connection Error. Please verify your JSONBin API Master Key setup.");
-    }
+    console.error("Critical Runtime Error Fetching App Core State Payload Database: ", err);
+    renderVideoGrid(DEFAULT_DATABASE.videos); // Fallback to safe defaults
   }
 }
 
+// Automatically fetch database state on page load
 document.addEventListener('DOMContentLoaded', fetchCloudData);
 
 function renderVideoGrid(videosToRender) {
@@ -49,9 +74,10 @@ function renderVideoGrid(videosToRender) {
   }
   
   grid.innerHTML = videosToRender.map(v => {
-    // Clever Check: If there's a custom thumbnail image, use it! Otherwise, fall back to the play icon badge.
+    // Check: If there's a custom thumbnail image, use it! Otherwise, fall back to the play icon badge.
     const imageCover = v.thumbnail 
-      ? `<img src="${v.thumbnail}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none';">`
+      ? `<img src="${v.thumbnail}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+         <span style="font-size:2.5rem; color:var(--accent-color); display:none;">▶️</span>`
       : `<span style="font-size:2.5rem; color:var(--accent-color);">▶️</span>`;
 
     return `
@@ -86,17 +112,19 @@ async function initWatchPage() {
 
   if (!video) return;
 
+  // Global Sync View Counter
   video.views = (video.views || 0) + 1;
-  document.getElementById('videoElement').src = video.url;
   
   // Custom fix: Adds a poster image to the actual streaming video player container as well!
   if(video.thumbnail) {
     document.getElementById('videoElement').poster = video.thumbnail;
   }
 
+  document.getElementById('videoElement').src = video.url;
   document.getElementById('videoTitle').innerText = video.title;
   document.getElementById('videoMetaStats').innerText = `${video.views} views • Category: ${video.category}`;
 
+  // Update cloud counter silently in the background
   fetch(BIN_URL, {
     method: 'PUT',
     headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
@@ -153,7 +181,8 @@ function showDashboard() {
   const totalViews = vList.reduce((sum, v) => sum + (v.views || 0), 0);
   document.getElementById('metricViews').innerText = totalViews;
   document.getElementById('metricVideos').innerText = vList.length;
-  document.getElementById('adTextarea').value = (APP_DATA.settings && APP_DATA.settings.adSnippet) ? APP_DATA.settings.adSnippet : '';
+  // Ads are now hardcoded in HTML, so this field is now unused in the new structure
+  document.getElementById('adTextarea').value = '';
 
   const list = document.getElementById('adminVideoList');
   list.innerHTML = vList.map(v => `
@@ -167,7 +196,7 @@ function showDashboard() {
 async function addNewVideoAsset() {
   const title = document.getElementById('vidTitle').value;
   const url = document.getElementById('vidUrl').value;
-  const thumbnail = document.getElementById('vidThumb').value; // Grabs value
+  const thumbnail = document.getElementById('vidThumb').value; // Grabs thumbnail URL
   const category = document.getElementById('vidCategory').value;
 
   if (!title || !url) return alert('Please complete all video file inputs.');
@@ -177,10 +206,10 @@ async function addNewVideoAsset() {
   await saveToCloud();
 }
 
+// Functionality now hardcoded in HTML file. Field in admin dashboard is unused.
 async function saveAdSettings() {
-  if (!APP_DATA.settings) APP_DATA.settings = {};
-  APP_DATA.settings.adSnippet = document.getElementById('adTextarea').value;
-  await saveToCloud();
+  alert('Ads are now managed directly in the `index.html` file and cannot be updated through this field.');
+  showDashboard(); // Reloads with blank text area
 }
 
 async function deleteVideoAsset(id) {
