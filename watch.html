@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watch Premium Content</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header><div class="header-container"><a href="index.html" class="logo">FreePorn</a></div></header>
+
+  <main class="container watch-layout">
+    <div>
+      <div class="player-container">
+        <video id="videoElement" controls autoplay playsinline controlsList="nodownload"></video>
+      </div>
+      <h1 id="videoTitle" style="font-size:1.3rem; margin:15px 0 5px 0;">Loading...</h1>
+      <div class="video-meta" id="videoMetaStats" style="margin-bottom:15px;">0 views</div>
+      <button class="btn" style="background:#25D366;" onclick="shareToWhatsApp()">Share to WhatsApp</button>
+      <hr style="border-color: var(--bg-accent); margin: 20px 0;">
+      <div id="globalAdSlot" class="ad-wrapper"></div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:10px;">Related Videos</h3>
+      <div class="video-grid" id="relatedGrid" style="grid-template-columns: 1fr;"></div>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

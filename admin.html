@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control Panel Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .admin-card { background: var(--bg-secondary); padding: 20px; border-radius: var(--border-radius); margin-bottom: 20px; border: 1px solid var(--bg-accent); }
+    input, select, textarea { width: 100%; padding: 12px; background: var(--bg-accent); border: 1px solid #333; color: white; border-radius: 6px; margin: 8px 0 18px 0; }
+  </style>
+</head>
+<body>
+  <header><div class="header-container"><div class="logo">Platform Panel Admin</div></div></header>
+
+  <div id="loginGate" class="container" style="max-width: 400px; padding-top: 100px;">
+    <div class="admin-card">
+      <h3>System Sign-In Authentication</h3>
+      <input type="text" id="usernameField" placeholder="Username">
+      <input type="password" id="passwordField" placeholder="Password">
+      <button class="btn" style="width:100%" onclick="handleLogin()">Authenticate</button>
+    </div>
+  </div>
+
+  <div id="dashboardView" class="container" style="display: none;">
+    <h2>Platform Operational Metrics</h2>
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; margin-bottom:25px;">
+      <div class="admin-card" style="text-align:center;"><h4>Total Views</h4><h2 style="color:var(--accent-color);" id="metricViews">0</h2></div>
+      <div class="admin-card" style="text-align:center;"><h4>Videos Count</h4><h2 id="metricVideos">0</h2></div>
+      <div class="admin-card" style="text-align:center;"><h4>Status</h4><h2 style="color:#25D366;">Live</h2></div>
+    </div>
+
+    <div class="admin-card">
+      <h3>Add New Video Direct URL (.mp4)</h3>
+      <input type="text" id="vidTitle" placeholder="Video Display Name Title">
+      <input type="text" id="vidUrl" placeholder="Direct Video asset URL (.mp4 file extension)">
+      <select id="vidCategory">
+        <option value="Trending">Trending</option>
+        <option value="Amateur">Amateur</option>
+        <option value="Premium">Premium</option>
+      </select>
+      <button class="btn" onclick="addNewVideoAsset()">Publish Live on Site</button>
+    </div>
+
+    <div class="admin-card">
+      <h3>Manage Monetization Advertising Slots</h3>
+      <textarea id="adTextarea" rows="4" placeholder="Paste structural banner ad script snippets..."></textarea>
+      <button class="btn" onclick="saveAdSettings()">Update Banners</button>
+    </div>
+
+    <div class="admin-card">
+      <h3>Asset Directory Inventory Management</h3>
+      <div id="adminVideoList"></div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item"><span>🏠</span>Home</a>
+    <a href="contact.html" class="nav-item"><span>📞</span>Contact</a>
+    <a href="admin.html" class="nav-item active"><span>⚙️</span>Admin</a>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>

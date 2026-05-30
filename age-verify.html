@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age Verification Required</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="verify-modal">
+    <div>
+      <h1 class="logo" style="font-size: 3.5rem; margin-bottom: 10px;">FreePorn</h1>
+      <h2>Age Verification</h2>
+      <p style="color: var(--text-muted); margin-bottom: 30px; padding:0 20px;">You must be 18 years of age or older to enter this website.</p>
+      <button class="btn" onclick="verifyAge(true)">I am 18 or older</button>
+      <button class="btn btn-secondary" onclick="verifyAge(false)">Leave</button>
+    </div>
+  </div>
+  <script>
+    function verifyAge(isAdult) {
+      if (isAdult) { localStorage.setItem('isAdult', 'true'); window.location.href = 'index.html'; } 
+      else { window.location.href = 'https://www.google.com'; }
+    }
+  </script>
+</body>
+</html>

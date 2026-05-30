@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FreePorn - Mobile Video Platform</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <a href="index.html" class="logo">FreePorn</a>
+      <div class="search-bar"><input type="text" id="searchInput" placeholder="Search videos..." onkeyup="searchContent()"></div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="globalAdSlot" class="ad-wrapper"></div>
+    <div class="categories-chips">
+      <div class="chip active" onclick="filterCategory('All', event)">All Videos</div>
+      <div class="chip" onclick="filterCategory('Trending', event)">Trending</div>
+      <div class="chip" onclick="filterCategory('Amateur', event)">Amateur</div>
+      <div class="chip" onclick="filterCategory('Premium', event)">Premium</div>
+    </div>
+    <h2>Featured Content</h2>
+    <div class="video-grid" id="mainVideoGrid"></div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item active"><span>🏠</span>Home</a>
+    <a href="contact.html" class="nav-item"><span>📞</span>Contact</a>
+    <a href="admin.html" class="nav-item"><span>⚙️</span>Admin</a>
+  </nav>
+  <script src="app.js"></script>
+</body>
+</html>
